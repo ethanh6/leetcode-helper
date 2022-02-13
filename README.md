@@ -1,20 +1,19 @@
-# Leetcode project
+# Leetcode Helper
 
-Leetcode organizer with python
+Leetcode organizer written in python3
 
-## Functionality
+## Functionality (in progress)
 1. Get/update leetcode questions database
     - question id
     - question description
     - starter code
+    - sample testcase
 2. Local dev environment
     - C++
-    - Python
-3. Test solution locally
-    - get test cases
+    - Python3
+    - Rust
+    - etc
+3. Auto test locally
 4. Submit solution
 5. Organize solution locally
 
-
-## Progress
-1. fetch all problem metadata
