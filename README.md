@@ -16,4 +16,4 @@ Leetcode organizer written in python3
 3. Auto test locally
 4. Submit solution
 5. Organize solution locally
-
+6. Serialization of the helper object
