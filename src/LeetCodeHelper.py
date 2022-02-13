@@ -1,8 +1,9 @@
 import urllib3, json, re, requests, argparse
 from bs4 import BeautifulSoup as bs
 from config import *
+from Question import Question
 
-class LeetcodeCLI():
+class LeetcodeHelper():
     def __init__(self, refresh_data: bool):
         self.language_extension = {"C++": "cpp", "Python3": "py"}
         self.csrftoken = None
@@ -20,76 +21,23 @@ class LeetcodeCLI():
 
         self.total_problem_count = self.data["data"]["problemsetQuestionList"]["total"]
         self.question_metadata = self.data["data"]["problemsetQuestionList"]["questions"]
+
+
+        # all question instances here
+        self.questions = {}
             
 
-    def get_question_starter(self, question_id: int, language="Python3", showHints=False, showSimilar=False) :
+    def build_question(self, q_id: int) :
+        self.questions[q_id] = Question(metadata=self.question_metadata[q_id-1])
 
-        q = self.question_metadata[question_id-1]
+    def get_all_built_question(self):
+        return self.questions
 
-        # usable data in q (q is a dictionaly)
-        # acRate: 48.239787883036115
-        # difficulty: Easy
-        # freqBar: None
-        # frontendQuestionId: 1
-        # isFavor: False
-        # paidOnly: False
-        # status: None
-        # title: Two Sum
-        # titleSlug: two-sum
-        # topicTags: [{'name': 'Array', 'id': 'VG9waWNUYWdOb2RlOjU=', 'slug': 'array'}, {'name': 'Hash Table', 'id': 'VG9waWNUYWdOb2RlOjY=', 'slug': 'hash-table'}]
-        # hasSolution: True
-        # hasVideoSolution: True
-
-
-        # get more data from the website
-        data[QUESTION_KEY][QUESTION_QUERY_KEY] = q["titleSlug"]
-        res = requests.post(WEBSITE_URL + QUERY_EXTENTION, json = data).json()['data']['question']
-
-        # usable data in res (res is a dictionary)
-        # questionId, questionFrontendId, boundTopicId, title, titleSlug,
-        # content, translatedTitle, translatedContent, isPaidOnly,
-        # difficulty, likes, dislikes, isLiked, similarQuestions, contributors,
-        # langToValidPlayground, topicTags, companyTagStats, codeSnippets,
-        # stats, hints, solution, status, sampleTestCase, metaData,
-        # judgerAvailable, judgeType, mysqlSchemas, enableRunCode,
-        # enableTestMode, envInfo, libraryUrl, __typename,
-        
-        description = bs(res['content'], 'lxml').get_text()
-        description += "\n\n"
-
-        # add hints
-        if showHints :
-            description += "\n===  Hints === \n"
-            for h in res['hints'] :
-                description += h + "\n"
-
-        # add similar questions
-        if showSimilar :
-            description += "\n=== Similar Questions === \n"
-            similar_questions = [q["titleSlug"] for q in json.loads(res['similarQuestions'])]
-            for s in similar_questions:
-                description += s + "\n"
-
-        # add link to leetcode website
-        description += "\n=== Question url === \n" + WEBSITE_URL + PROBLEM_EXTENTION + q["titleSlug"]
-
-        # get code snippets
-        code_snippet = "".join([c['code'] if c['lang'] == language else "" for c in res['codeSnippets']])
-
-        # get sample test case input as keyword arg to the solution
-        sample_testcase = res["sampleTestCase"].split("\n")
-
-        # parse the parameter name 
-        arg_name = [i['name'] for i in json.loads(res["metaData"])["params"]]
-
-        # address the parameter type 
-        print(json.loads(res["metaData"])["params"])
-
-        sample_input = {k:json.loads(v) for k, v in zip(arg_name, sample_testcase)}
-        print(sample_input)
-
-        # print(description)
-        print(code_snippet)
+    def get_single_built_question(self, q_id: int):
+        try:
+            return self.questions[q_id]
+        except:
+            exit("**ERROR*** This question (id={}) hasn't been built yet".format(q_id))
 
 
     def get_csrftoken(self):
@@ -151,10 +99,5 @@ class LeetcodeCLI():
         with open(input_file, 'r') as f:
             data = json.load(f)
         return data
-
-
-if __name__ == '__main__':
-    LC = LeetcodeCLI(refresh_data=False)
-    LC.get_question_starter(1, language="Python3", showHints=True, showSimilar=True)
 
 
