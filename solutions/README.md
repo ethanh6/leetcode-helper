@@ -27,7 +27,7 @@ A record of my Python and C++ solutions.
 | | [Valid Anagram](https://leetcode.com/problems/valid-anagram/) | Easy | [Solution](solution/Valid_Anagram) |
 | | [Valid Parentheses](https://leetcode.com/problems/valid-parentheses/) | Easy | [Solution](solution/Valid_Parentheses) |
 | | [Valid Palindrome](https://leetcode.com/problems/valid-palindrome/) | Easy | [Solution](solution/Valid_Palindrome) |
-| | [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | [Solution](solution/Longest_Substring_Without_Repeating_Characters) |
+| | [Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/) | Medium | [Solution](solutions/Longest_Substring_Without_Repeating_Characters) |
 | | [Longest Repeating Character Replacement](https://leetcode.com/problems/longest-repeating-character-replacement/) | Medium | [Solution](solution/Longest_Repeating_Character_Replacement) |
 | | [Group Anagrams](https://leetcode.com/problems/group-anagrams/) | Medium | [Solution](solution/Group_Anagrams) |
 | | [Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/) | Medium | [Solution](solution/Longest_Palindromic_Substring) |
