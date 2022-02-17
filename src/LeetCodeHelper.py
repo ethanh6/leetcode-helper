@@ -26,6 +26,27 @@ class LeetcodeHelper():
         # all question instances here
         self.questions = {}
 
+    def write_to_my_db(self):
+        # read file
+        with open("./data/my_db.json", "r") as f:
+            existing_questions = json.load(f)
+
+        print(existing_questions)
+        print(self.questions)
+        for i, q in self.questions.items():
+            if i in existing_questions:
+                existing_questions[i]["count"] += 1
+            else:
+                existing_questions[i] = {"title_slug":q.title_slug, "count": 1}
+
+        print(existing_questions)
+
+        with open("./data/my_db.json", "w") as f:
+            json.dump(existing_questions, f)
+
+        print("./data/my_db.json has been updated")
+
+
     def build_working_dir_for_questions(self):
         print("You have {} questions".format(self.questions))
         if len(self.questions) == 0:
@@ -40,22 +61,22 @@ class LeetcodeHelper():
                     with open(os.path.join("solutions/", q.title_slug, q.title_slug+str(rec)+extension), "w+") as f:
                         f.write(snippet)
             else:
-                print("Creating solution dir id={}".format(i))
                 os.makedirs(os.path.join("solutions", q.title_slug))
+                print("Solution dir id={} created".format(i))
 
-                print("Creating README.md")
                 with open(os.path.join("solutions", q.title_slug, "README.md"), "w+") as f:
                     f.write(q.description)
+                print("README.md for question created")
 
-                print("Creating sample input")
                 with open(os.path.join("solutions", q.title_slug, "sample_input.json"), "w+") as f:
                     f.write(json.dumps(q.sample_input))
+                print("Sample input created")
 
-                print("Creating code snippet")
                 for lang, snippet in q.code_snippet.items():
                     extension = ".py" if lang == "Python3" else ".cpp"
                     with open(os.path.join("solutions", q.title_slug, q.title_slug+extension), "w+") as f:
                         f.write(snippet)
+                print("Code snippet created")
 
     def build_question(self, q_id: int) :
         self.questions[q_id] = Question(metadata=self.question_metadata[q_id-1])
