@@ -2,11 +2,9 @@ import os
 
 #Set base path.
 BASE_PATH = "./"
-# CACHE_PATH = os.path.join(BASE_PATH, "cache")
-# CACHED_QUESTION = os.path.join(CACHE_PATH,  "cache.json")
-SNIPPET_PATH = os.path.join(BASE_PATH, "snippets/")
+SOLUTION_PATH = os.path.join(BASE_PATH, "solutions/")
+RAW_DATA_FILE_PATH = os.path.join(BASE_PATH, "data", "raw_data.json")
 # QUEUE_FILE = os.path.join(BASE_PATH, "queue.txt")
-DATA_FILE_PATH = os.path.join(BASE_PATH, "data", "data.json")
 
 # Snippet-config.
 INCLUDE_LIBS_KEY = 'header'

@@ -1,4 +1,4 @@
-import urllib3, json, re, requests, argparse
+import urllib3, json, re, requests, argparse, os
 from bs4 import BeautifulSoup as bs
 from config import *
 from Question import Question
@@ -12,12 +12,12 @@ class LeetcodeHelper():
         if refresh_data: 
             # fetch all problem data from leetcode.com again and store as data.json
             self.csrftoken = self.get_csrftoken()
-            self.data = self.read_data_from_remote(DATA_FILE_PATH, self.csrftoken)
+            self.data = self.read_data_from_remote(RAW_DATA_FILE_PATH, self.csrftoken)
             print("Successfully fetched all problem data from leetcode.com")
-            print("Data stored at {}".format(DATA_FILE_PATH))
+            print("Data stored at {}".format(RAW_DATA_FILE_PATH))
         else:
-            self.data = self.read_data_from_local_file(DATA_FILE_PATH)
-            print("Successfully read all problem data from {}".format(DATA_FILE_PATH))
+            self.data = self.read_data_from_local_file(RAW_DATA_FILE_PATH)
+            print("Successfully read all problem data from {}".format(RAW_DATA_FILE_PATH))
 
         self.total_problem_count = self.data["data"]["problemsetQuestionList"]["total"]
         self.question_metadata = self.data["data"]["problemsetQuestionList"]["questions"]
@@ -25,20 +25,49 @@ class LeetcodeHelper():
 
         # all question instances here
         self.questions = {}
-            
+
+    def build_working_dir_for_questions(self):
+        print("You have {} questions".format(self.questions))
+        if len(self.questions) == 0:
+            return
+        for i, q in self.questions.items():
+            if os.path.isdir("solutions/{}".format(q.title_slug)):
+                print("Solution dir found.")
+                rec = len([n for n in os.listdir('.') if os.path.isfile(n)])//2
+                print("Creating code snippet version -{}".format(rec))
+                for lang, snippet in q.code_snippet.items():
+                    extension = ".py" if lang == "Python3" else ".cpp"
+                    with open(os.path.join("solutions/", q.title_slug, q.title_slug+str(rec)+extension), "w+") as f:
+                        f.write(snippet)
+            else:
+                print("Creating solution dir id={}".format(i))
+                os.makedirs(os.path.join("solutions", q.title_slug))
+
+                print("Creating README.md")
+                with open(os.path.join("solutions", q.title_slug, "README.md"), "w+") as f:
+                    f.write(q.description)
+
+                print("Creating sample input")
+                with open(os.path.join("solutions", q.title_slug, "sample_input.json"), "w+") as f:
+                    f.write(json.dumps(q.sample_input))
+
+                print("Creating code snippet")
+                for lang, snippet in q.code_snippet.items():
+                    extension = ".py" if lang == "Python3" else ".cpp"
+                    with open(os.path.join("solutions", q.title_slug, q.title_slug+extension), "w+") as f:
+                        f.write(snippet)
 
     def build_question(self, q_id: int) :
         self.questions[q_id] = Question(metadata=self.question_metadata[q_id-1])
 
-    def get_all_built_question(self):
-        return self.questions
-
+    def delete_question(self, q_id: int) :
+        del self.questions[q_id]
+        
     def get_single_built_question(self, q_id: int):
         try:
             return self.questions[q_id]
         except:
             exit("**ERROR*** This question (id={}) hasn't been built yet".format(q_id))
-
 
     def get_csrftoken(self):
         http = urllib3.PoolManager()
@@ -54,7 +83,6 @@ class LeetcodeHelper():
             return match_obj.group(1)
         else:
             raise RuntimeError('Fail to parse csrftoken from headers! headers: %s' % r.headers)
-
 
     def fetch(self, csrftoken, limit=50):
         http = urllib3.PoolManager()
@@ -100,4 +128,5 @@ class LeetcodeHelper():
             data = json.load(f)
         return data
 
+        
 

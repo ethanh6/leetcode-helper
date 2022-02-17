@@ -8,15 +8,16 @@ class Question():
         # acRate, difficulty, freqBar, frontendQuestionId, isFavor,
         # paidOnly, status, title, titleSlug, topicTags, hasSolution,
         # hasVideoSolution
+
+        self.language = ["Python3", "C++"]
         self.metadata = metadata
         self.title= metadata["title"]
         self.title_slug = metadata["titleSlug"]
         self.question_id = metadata["frontendQuestionId"]
         self.difficulty = metadata["difficulty"]
         self.description = ""
-        self.code_snippet = ""
+        self.code_snippet = {}
         self.sample_input = None
-        self.topic_tags = None
 
         # get more data from the website
         data[QUESTION_KEY][QUESTION_QUERY_KEY] = self.title_slug
@@ -33,6 +34,9 @@ class Question():
         # judgerAvailable, judgeType, mysqlSchemas, enableRunCode,
         # enableTestMode, envInfo, libraryUrl, __typename,
 
+        self.generate_description()
+        self.generate_code_snippet()
+        self.generate_sample_input()
 
     def generate_description(self, showHints=True, showSimiar=True, showURL=True, showTags=True):
         self.description = "\n===  Question === \n"
@@ -63,13 +67,11 @@ class Question():
             self.description += WEBSITE_URL + PROBLEM_EXTENTION + self.title_slug
             self.description += "\n\n"
 
-        print(self.description)
 
-
-    def generate_code_snippet(self, language="Python3"):
+    def generate_code_snippet(self):
         for c in self.res['codeSnippets']:
-            if c['lang'] == language:
-                self.code_snippet = c['code']
+            if c['lang'] in self.language:
+                self.code_snippet[c['lang']] = c['code']
         if self.code_snippet is None:
             raise NameError("Can't find your the languauge {}".format(language))
 
@@ -84,4 +86,3 @@ class Question():
 
         # combine name and value as a dict
         self.sample_input = {k:v for k, v in zip(arg_name, arg_val)}
-

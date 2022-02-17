@@ -1,6 +1,21 @@
 # Leetcode Helper
 
-Leetcode organizer written in python3
+### Leetcode solution organizer written in python3
+
+
+# How to use
+To creates question templates under `./solutions/`, including question readme, Python3 and C++ code snippet, and sample input.
+<br>
+
+```
+# insice neovim
+:!python3 ./src/create.py <number of question> <q id 1> <q id 2> ...
+```
+
+# for example, this create 3 dir under `./solutions/` for question 14, 88, 9
+```
+!python3 src/create.py 3 14 88 9
+```
 
 ## Functionality (in progress)
 1. Get/update leetcode questions database
