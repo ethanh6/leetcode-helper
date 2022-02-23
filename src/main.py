@@ -13,18 +13,18 @@ if __name__ == '__main__':
             exit("input not valid: {}".format(sys.argv))
 
         # build questions
-        # print("building questions")
         for i, q in enumerate(sys.argv):
             if int(i) < 3:
                 continue
             LCH.build_question(q_id=int(q))
 
-        # print("build working dir for questions")
         # build working dirs for these questions
         LCH.build_working_dir_for_questions()
+        print("Question and its working dir has been built")
 
         # write to my_db
         LCH.write_to_my_db()
+        print("Database (my_db.json) has been updated")
 
     # read my_db.json and generate README.md
     elif mode == "gen":

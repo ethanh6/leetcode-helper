@@ -47,7 +47,7 @@ class LeetcodeHelper():
 
 
     def build_working_dir_for_questions(self):
-        print("\tYou have {} questions".format(len(self.questions)))
+        # print("\tYou have {} questions".format(len(self.questions)))
         if len(self.questions) == 0:
             return
         for i, q in self.questions.items():
