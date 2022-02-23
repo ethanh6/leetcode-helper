@@ -13,11 +13,11 @@ class LeetcodeHelper():
             # fetch all problem data from leetcode.com again and store as data.json
             self.csrftoken = self.get_csrftoken()
             self.data = self.read_data_from_remote(RAW_DATA_FILE_PATH, self.csrftoken)
-            print("Successfully fetched all problem data from leetcode.com")
-            print("Data stored at {}".format(RAW_DATA_FILE_PATH))
+            # print("Successfully fetched all problem data from leetcode.com")
+            # print("Data stored at {}".format(RAW_DATA_FILE_PATH))
         else:
             self.data = self.read_data_from_local_file(RAW_DATA_FILE_PATH)
-            print("Successfully read all problem data from {}".format(RAW_DATA_FILE_PATH))
+            # print("Successfully read all problem data from {}".format(RAW_DATA_FILE_PATH))
 
         self.total_problem_count = self.data["data"]["problemsetQuestionList"]["total"]
         self.question_metadata = self.data["data"]["problemsetQuestionList"]["questions"]
@@ -31,52 +31,53 @@ class LeetcodeHelper():
         with open("./data/my_db.json", "r") as f:
             existing_questions = json.load(f)
 
-        print(existing_questions)
-        print(self.questions)
-        for i, q in self.questions.items():
-            if i in existing_questions:
-                existing_questions[i]["count"] += 1
-            else:
-                existing_questions[i] = {"title_slug":q.title_slug, "count": 1}
+        # print(existing_questions)
+        # print(self.questions)
 
-        print(existing_questions)
+        for i, q in self.questions.items():
+            if str(i) in existing_questions:
+                existing_questions[str(i)]["count"] += 1
+            else:
+                existing_questions[str(i)] = {"qid":i, "title_slug":q.title_slug, "count": 1}
+
+        # print(existing_questions)
 
         with open("./data/my_db.json", "w") as f:
             json.dump(existing_questions, f)
 
-        print("./data/my_db.json has been updated")
-
 
     def build_working_dir_for_questions(self):
-        print("You have {} questions".format(self.questions))
+        print("\tYou have {} questions".format(len(self.questions)))
         if len(self.questions) == 0:
             return
         for i, q in self.questions.items():
             if os.path.isdir("solutions/{}".format(q.title_slug)):
-                print("Solution dir found.")
+                # if the solution dir already exists, create second version of the solution in the same dir
+                # print("\tSolution dir found.")
                 rec = len([n for n in os.listdir('.') if os.path.isfile(n)])//2
-                print("Creating code snippet version -{}".format(rec))
+                # print("\tCreating code snippet version -{}".format(rec))
                 for lang, snippet in q.code_snippet.items():
                     extension = ".py" if lang == "Python3" else ".cpp"
                     with open(os.path.join("solutions/", q.title_slug, q.title_slug+str(rec)+extension), "w+") as f:
                         f.write(snippet)
             else:
+                # creating a new question working dir
                 os.makedirs(os.path.join("solutions", q.title_slug))
-                print("Solution dir id={} created".format(i))
+                # print("\tSolution dir id={} created".format(i))
 
                 with open(os.path.join("solutions", q.title_slug, "README.md"), "w+") as f:
                     f.write(q.description)
-                print("README.md for question created")
+                # print("\tREADME.md for question created")
 
                 with open(os.path.join("solutions", q.title_slug, "sample_input.json"), "w+") as f:
                     f.write(json.dumps(q.sample_input))
-                print("Sample input created")
+                # print("\tSample input created")
 
                 for lang, snippet in q.code_snippet.items():
                     extension = ".py" if lang == "Python3" else ".cpp"
                     with open(os.path.join("solutions", q.title_slug, q.title_slug+extension), "w+") as f:
                         f.write(snippet)
-                print("Code snippet created")
+                # print("\tCode snippet created")
 
     def build_question(self, q_id: int) :
         self.questions[q_id] = Question(metadata=self.question_metadata[q_id-1])
